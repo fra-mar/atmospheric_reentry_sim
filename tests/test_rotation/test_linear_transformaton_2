@@ -1,0 +1,69 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+Created on Fri Jul 23 09:54:32 2021
+
+@author: paco
+"""
+
+'''testing linear transformatons, according to 3eyeBlue video series linear algebra
+https://www.youtube.com/watch?v=rHLEWRxRGiM
+now... 3D!!!!
+'''
+
+from matplotlib import pyplot as plt
+from mpl_toolkits import mplot3d
+import numpy as np
+
+#%% creating transformation matrix = where goes i_unitary j_unitary after a rotation
+
+def rotate_vector(a_vector):
+    v_rotated_x = a_vector[0][0]*np.cos(theta) -a_vector[0][1]*np.sin(theta)
+    v_rotated_y = a_vector[0][0]*np.sin(theta) +a_vector[0][1]*np.cos(theta)
+    v_rotated_z = a_vector[0][2]
+    return np.array([ [v_rotated_x, v_rotated_y, v_rotated_z]])
+
+i_u= np.array( [[1,0,0]])
+
+j_u = np.array( [[0,1,0]])
+
+k_u = np.array( [[0,0,1]])
+
+theta = 35 * np.pi / 180 #weĺl rotate axis 30 degrees counterclockwise
+
+i_rotated = rotate_vector(i_u)
+j_rotated = rotate_vector(j_u)
+k_rotated = k_u
+
+transf_mat = np.array([ [i_rotated[0][0], j_rotated[0][0], k_rotated[0][0]],
+                       [i_rotated[0][1], j_rotated[0][1], k_rotated[0][1]],
+                       [i_rotated[0][2], j_rotated[0][2], k_rotated[0][2]]
+                       ])
+
+#%% create a vector in standard conditions and the the rotated axis using lineal transformation 
+# transformed vector = transf_matrix x v_original
+    
+v_original = np.array([ [2,3,0]])
+
+v_original_transformed = np.matmul(transf_mat, v_original.T).T
+
+#%% plotting
+
+vectors = [(i_u,'red'),(j_u,'red'),(k_u,'red'),(i_rotated,'blue'),( j_rotated,'blue'),
+           ( v_original,'yellow'), (v_original_transformed, 'yellow')]
+
+fig = plt.figure ( 'testing linear transformation')
+ax = plt.axes(projection = '3d')
+
+for vv,cc in vectors:
+    print (vv)
+    ax.scatter(0,0,0, color = 'b')
+    ax.quiver(0,0,0,vv[0][0],vv[0][1],vv[0][2] , color = cc,  length = 0.05)
+
+#plt.axis([-3,3,-3,3,-3,3])    
+plt.show()
+
+
+
+
+

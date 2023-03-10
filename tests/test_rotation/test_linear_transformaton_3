@@ -1,0 +1,105 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+Created on Fri Jul 23 09:54:32 2021
+
+@author: paco
+"""
+
+'''testing linear transformatons, according to 3eyeBlue video series linear algebra
+https://www.youtube.com/watch?v=rHLEWRxRGiM
+
+The plan now is to keep a set of  unitary vectors. y_vector that can be rotated  (see rotation of a point script)
+Then that rotated vector y can be linearly transformed to match the velocity unitary vector.
+By doing that lift vector will point, hopefully, in the right direction.
+
+With this code we'll test  rotation of an y vector and then check if points orthogonal to velocity vector
+
+In a pyplot 3D graph x points to the right, y points upwards and z goes through the screen
+'''
+
+from matplotlib import pyplot as plt
+from mpl_toolkits import mplot3d
+import numpy as np
+
+#%% creating transformation matrix = where goes i_unitary j_unitary after a rotation
+
+def rotate_vector(a_vector):  #the object rotates around axis y 
+    v_rotated_x= a_vector[0][0]*np.cos(theta) -a_vector[0][2]*np.sin(theta)
+    v_rotated_z = a_vector[0][0]*np.sin(theta) +a_vector[0][2]*np.cos(theta)
+    v_rotated_y = a_vector[0][0]
+    return np.array([ [v_rotated_x, v_rotated_y, v_rotated_z]])
+
+x_u= np.array( [[1,0,0]])
+
+y_u = np.array( [[0,1,0]])
+
+z_u = np.array( [[0,0,1]])
+
+theta = 0 * np.pi / 180 #weĺl rotate axis 30 degrees counterclockwise
+
+'''
+x_rotated = rotate_vector(x_u)
+z_rotated = rotate_vector(z_u)
+'''
+z_rotated = rotate_vector(z_u)
+
+
+def transformation_matrix(vector):
+    module_vector = np.sqrt( np.sum (vector**2)) 
+    vector_u = vector / module_vector
+
+    x_vector_u=np.array([[vector_u[0][0],0,0]])
+
+    y_vector_u=np.array([[0,vector_u[0][1],0]])
+    
+    z_vector_u=np.array([ [0,0,vector_u[0][2]] ])
+    
+    print (vector_u)
+    print (x_vector_u, y_vector_u, z_vector_u)
+    
+    transf_mat = np.array([ [x_vector_u[0][0], y_vector_u[0][0], z_vector_u[0][0]],
+                           [x_vector_u[0][1], y_vector_u[0][1], z_vector_u[0][1]],
+                           [x_vector_u[0][2], y_vector_u[0][2], z_vector_u[0][2]]  ])
+    
+    '''
+    transf_mat = np.array([ [vector_u[0][0], 0, 0],
+                           [0, vector_u[0][1],0],
+                           [0,0, vector_u[0][2]]    
+                           ])'''
+    print (transf_mat)
+    #print (x_vector_u, y_vector_u, z_vector_u)
+    return module_vector, vector_u,transf_mat
+
+#%% create a vector in standard conditions and the the rotated axis using lineal transformation 
+# transformed vector = transf_matrix x v_original
+    
+v_velocity = np.array([[ 0,3,2]])
+
+module_v_vel, v_vel_u, transf_mat = transformation_matrix(v_velocity) 
+
+L_u = np.matmul(transf_mat, z_rotated.T).reshape((1,3))
+
+#%% plotting
+
+vectors = [(v_vel_u,'black'),(L_u,'blue')]
+
+fig = plt.figure ( 'testing linear transformation')
+ax = plt.axes(projection = '3d')
+
+for vv,cc in vectors:
+    print (vv)
+    ax.scatter(0,0,0, color = 'b')
+    ax.quiver(0,0,0,vv[0][0],vv[0][1],vv[0][2] , color = cc,  length = 1)
+
+ax.scatter (x_u*4, y_u*4, z_u *4) #points to have a reference
+ax.view_init(10,10)              #change the point of view (angle above x_ais, rotation angle from z_axis)
+ax.set_xlabel('x')
+ax.set_ylabel('y')
+ax.set_zlabel('z')
+plt.show()
+
+
+
+
+

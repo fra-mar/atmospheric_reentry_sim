@@ -1,0 +1,61 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+Created on Fri Jul 23 09:54:32 2021
+
+@author: paco
+"""
+
+'''testing linear transformatons, according to 3eyeBlue video series linear algebra
+https://www.youtube.com/watch?v=rHLEWRxRGiM
+'''
+
+from matplotlib import pyplot as plt
+import numpy as np
+
+#%% creating transformation matrix = where goes i_unitary j_unitary after a rotation
+
+def rotate_vector(a_vector):
+    v_rotated_x = a_vector[0][0]*np.cos(theta) -a_vector[0][1]*np.sin(theta)
+    v_rotated_y = a_vector[0][0]*np.sin(theta) +a_vector[0][1]*np.cos(theta)
+    return np.array([ [v_rotated_x, v_rotated_y]])
+
+i_u= np.array( [[1,0]])
+
+j_u = np.array( [[0,1]])
+
+theta = 0 * np.pi / 180 #weĺl rotate axis 30 degrees counterclockwise
+
+i_rotated = rotate_vector(i_u)
+j_rotated = rotate_vector(j_u)
+
+transf_mat = np.array([ [i_rotated[0][0], j_rotated[0][0]],
+                       [i_rotated[0][1], j_rotated[0][1]]])
+
+#%% create a vector in standard conditions and the the rotated axis using lineal transformation 
+# transformed vector = transf_matrix x v_original
+    
+v_original = np.array([ [0,4]])
+
+v_original_transformed = np.matmul(transf_mat, v_original.T).T
+
+#%% plotting
+
+vectors = [(i_u,'r'),(j_u,'r'),(i_rotated,'b'),( j_rotated,'b'),
+           ( v_original,'r'), (v_original_transformed, 'b')]
+
+fig = plt.figure ( 'testing linear transformation')
+ax = fig.add_subplot(111)
+
+for vv,cc in vectors:
+    
+    ax.scatter(0,0, color = 'b')
+    ax.quiver(0,0,vv[0][0],vv[0][1], color = cc, scale = 10 )
+
+ax.axis([-3,3,-3,3])    
+plt.show()
+
+
+
+
+
