@@ -19,8 +19,8 @@ Updates:
 Updatable objects (ship, vectors, time text) wasn't updated.
 Fixed with setting blit = False and clearing collections
 ( ax_h.collections.clear())
-
-@author: paco
+OBS! 230629 I commented that line and set blit=True..cause .clear raised error
+...I guess related to matplotlib version.
 
 
 """
@@ -66,7 +66,7 @@ def on_press(key):
         rot = -1
     else:
         pass
-    print (str(rot),'\n')
+    #print (str(rot),'\n')
 
 listener=keyboard.Listener(on_press=on_press)
 listener.start()
@@ -180,7 +180,8 @@ def gen_data():
 
 #%% Starting plots
 
-fig = plt.figure('Spheroid (=not perfect sphere) free fall', figsize = (14,8))
+fig = plt.figure('Asimmetric spherical object. Free fall simulation', figsize =
+                 (14,8), facecolor= '#ffe4c4')
 
 ax_h = fig.add_subplot(1,1,1)
 
@@ -196,9 +197,15 @@ ship, = ax_h.plot([],[], 'bo')
 time_txt = ax_h.text(0.86,0.7,'', 
                      color= 'C2', fontsize= 40, 
                      alpha= 0.6, transform=ax_h.transAxes)
-ax_h.text(0.9, 0.55,
-          'Press z or x for\nbody rotation',
-          transform=ax_h.transAxes)
+
+info_text= '''
+Round object fall simulation.\n
+The object is slightly asimmetryc.
+This generates a certain lift vector
+which can be used for steering.\n
+Press z or x 
+to turn the object 180deg'''
+ax_h.text(0.8, 0.45, info_text, transform=ax_h.transAxes)
 
 q_list = []
 for i in range (0,5):
@@ -239,7 +246,7 @@ def update(frame):
     
     s,h, vectors_list= gen_data() #
     
-    ax_h.collections.clear()
+    #ax_h.collections.clear()
     
     ship.set_data(s,h)
     
@@ -266,7 +273,7 @@ def update(frame):
 ani = FuncAnimation(fig, update, 
                     init_func=init, 
                     frames = gen, 
-                    interval = interval, repeat = False, blit=False)
+                    interval = interval, repeat = False, blit=True)
 
 plt.show()
 

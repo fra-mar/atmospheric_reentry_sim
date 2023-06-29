@@ -1,0 +1,9 @@
+./venv_reentry
+flight_data.csv
+flight_data.npy
+github_version
+__pycache__
+status_DL.npy
+status.npy
+./old_versions
+./definitive/github_version/soyuz_reentry-main/README.odt
