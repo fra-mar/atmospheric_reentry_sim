@@ -56,22 +56,18 @@ from pynput import keyboard
 
 from lift import  lift_vector, air_density, gravity_calc, area_drag, landing_sites
 
+import os
+
+pwd= os.getcwd()
+with open (os.path.join(pwd, 'lib_files', 'init_params.txt')) as f:
+    line= f.readline()
+    mass, LD_ratio= line.split(',')
+mass= float(mass)
+LD_ratio= float(LD_ratio)
 
 #%% Ask user what Cd and L/D ratio
 
-Cd = input ('\nWhat drag coefficient? (rec 0.3-2, 1.26 deffault): ') 
-
-LD_ratio = input ('\nWhat lift to drag ratio? (rec 0.3-2, 0.4 deffault): ') 
-
-#Cd = ''; LD_ratio = '1.2'
-
-if Cd=='':
-    Cd = 1.26
-    
-if LD_ratio == '':
-    LD_ratio = 0.4
-
-Cd, LD_ratio = float (Cd), float(LD_ratio)
+Cd = 1 
 
 #Draws equation to correct Cd after rho.
 rho_min, rho_max = air_density(1e4), air_density(7e4)
@@ -82,7 +78,6 @@ Cd_high = Cd *1.4 #at higher atmosphere Cd will be 40% higher compared to lower 
 n = (np.log10(Cd) - np.log10(Cd_high)) / (np.log10(rho_min) - np.log10(rho_max) )
 
 log_A = n * (-np.log10(rho_max)) + np.log10(Cd_high)
-
 
 #%% Lambdas and coversions
 
@@ -113,7 +108,7 @@ listener.start()
 
 #%% initial variables
 
-A = 3.8 ; m = 2300.0; rot = 1 #projected area, mass = 2.3 tons
+A = 3.8 ; m = mass; rot = 1 #projected area Soyuz, mass = 2.3 tons
 
 h = 70.1e3 #altitud in meters
 
@@ -349,9 +344,6 @@ def update(frame):
     
     ship.set_data(long, lat)
     
-    
-    #print (Dyx[0], Dyx[1])
-    
     vel_after_yx = np.array([vel_after[0][1], vel_after[0][0]])
     vel_after_yxz = np.array( [ module(vel_after_yx), vel_after[0][2]])
     q_vel_after_z.set_UVC(vel_after_yxz[0], vel_after_yxz[1])
@@ -370,7 +362,6 @@ def update(frame):
     alpha = np.arctan(orto_u_vel_after[0]/orto_u_vel_after[1])
     mod_Lyxz = lift_z/np.cos(alpha)
     Lyxz = orto_u_vel_after*mod_Lyxz
-    print (L)
     
     q_L_z.set_UVC(Lyxz[0], Lyxz[1])
     Lyx = np.array([L[0][1], L[0][0] ] )
@@ -385,7 +376,6 @@ def update(frame):
     Ryx = Dyx + Lyx 
     q_R_yx.set_UVC(Ryx[0], Ryx[1])
     q_R_yx.set_offsets(np.array( [long,lat]))
-    print (total_time)
 
     #Displayed data: updating content
     ground_speed = '{:.2f} m/s'.format ( module ( np.array([vel_after[0][0],vel_after[0][1]])))
@@ -415,5 +405,5 @@ def update(frame):
            )
    
 ani = FuncAnimation(fig, update, frames = gen_frames, interval = 20,
-                    repeat = False, blit=True)
+                    repeat = False, blit=True )
 plt.show()
