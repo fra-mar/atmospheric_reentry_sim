@@ -6,14 +6,15 @@ Created on Mon Nov  8 22:01:17 2021
 @author: paco
 """
 import numpy as np
-
+import os
 from matplotlib import pyplot as plt
 
 from lift import landing_sites
 
 #%% Plotting flight analysis
 
-flight_data = np.genfromtxt ('flight_data.csv', delimiter = ',', skip_header=1)
+path= os.path.join(os.getcwd(),'lib_files','flight_data.csv')
+flight_data = np.genfromtxt (path, delimiter = ',', skip_header=1)
 
 fig2 = plt.figure('Flight analysis',figsize = (16,8), facecolor = '#eeeeee')
 fig2.subplots_adjust(wspace=0.3, hspace= 0.3)

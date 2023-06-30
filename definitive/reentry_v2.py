@@ -59,7 +59,8 @@ from lift import  lift_vector, air_density, gravity_calc, area_drag, landing_sit
 import os
 
 pwd= os.getcwd()
-with open (os.path.join(pwd, 'lib_files', 'init_params.txt')) as f:
+path_lib= os.path.join(pwd, 'lib_files')
+with open (os.path.join(path_lib, 'init_params.txt')) as f:
     line= f.readline()
     mass, LD_ratio= line.split(',')
 mass= float(mass)
@@ -224,8 +225,8 @@ def gen_data():
     flight_data = np.vstack ((flight_data,
                               [total_time,long,lat, h, g_s,rho,v_mod,Cd,
                               L_mod,D_mod,module(G),module(R)]))
-    np.save('flight_data.npy', flight_data)
-    np.savetxt('flight_data.csv', flight_data, delimiter=',', 
+    np.save(os.path.join(path_lib,'flight_data.npy'), flight_data)
+    np.savetxt(os.path.join(path_lib,'flight_data.csv'), flight_data, delimiter=',', 
                header = 'Time,Long,Lat,Alt,g_s,rho,vel,Cd,Lift,Drag,Gravity,Resultant')
     
     return (h, vel_after, g_s, theta, lat, long, heading,
@@ -250,7 +251,7 @@ extents = (46.000,88.000,40.000,56.000)
 ax_xy.set_xlim([extents[0],extents[1]])
 ax_xy.set_ylim([extents[2],extents[3]])
 
-img = 'Kazakhstan_map.png'
+img = os.path.join(path_lib,'Kazakhstan_map.png')
 
 map = plt.imread(img)
 
