@@ -62,13 +62,15 @@ pwd= os.getcwd()
 path_lib= os.path.join(pwd, 'lib_files')
 with open (os.path.join(path_lib, 'init_params.txt')) as f:
     line= f.readline()
-    mass, LD_ratio= line.split(',')
+    mass, area, cd, ld_ratio= line.split(',')
 mass= float(mass)
-LD_ratio= float(LD_ratio)
+area= float(area)
+cd= float(cd)
+LD_ratio= float(ld_ratio)
 
 #%% Ask user what Cd and L/D ratio
 
-Cd = 1 
+Cd = cd
 
 #Draws equation to correct Cd after rho.
 rho_min, rho_max = air_density(1e4), air_density(7e4)
@@ -109,7 +111,7 @@ listener.start()
 
 #%% initial variables
 
-A = 3.8 ; m = mass; rot = 1 #projected area Soyuz, mass = 2.3 tons
+A = area ; m = mass; rot = 1 #projected area Soyuz, mass = 2.3 tons
 
 h = 70.1e3 #altitud in meters
 

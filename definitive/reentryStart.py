@@ -17,7 +17,7 @@ import os
 class App(tk.Tk):
     def __init__(self):
         super().__init__()
-        self.geometry("800x300+10+10")
+        self.geometry("800x600+10+10")
         self.title('Atmospheric reentry simulator. v1.3. Start menu')
         self.configure(bg= '#f9cb9c')
         paddings = {'padx': 5, 'pady': 5}
@@ -31,7 +31,9 @@ class App(tk.Tk):
         
         self.ld= tk.DoubleVar(self,  value= 0.4)
         self.weight= tk.DoubleVar(self, value= 2200)
-        
+        self.area= tk.DoubleVar(self,  value= 3.8)
+        self.cd= tk.DoubleVar(self, value= 1)
+
         # set up variable
         self.model_var = tk.StringVar(self)
         
@@ -39,14 +41,21 @@ class App(tk.Tk):
         # create widget
         self.create_widgets()
         
-        #create an entry for age, t.ex.
+        #create entries for mass, area, Cd and L/D 
         
         self.ld= tk.Entry(self, width= 5, textvariable= self.ld)
-        self.ld.grid(row= 4, column= 1, sticky=tk.W, **paddings)
+        self.ld.grid(row= 6, column= 1, sticky=tk.W, **paddings)
         
         self.w= tk.Entry(self, width= 5, textvariable= self.weight)
         self.w.grid(row= 3, column= 1, sticky=tk.W, **paddings)
         
+        self.a= tk.Entry(self, width= 5, textvariable= self.area)
+        self.a.grid(row= 4, column= 1, sticky=tk.W, **paddings)
+        
+        self.d= tk.Entry(self, width= 5, textvariable= self.cd)
+        self.d.grid(row= 5, column= 1, sticky=tk.W, **paddings)
+        
+
         self.start_button= ttk.Button(self, text='START SIMULATION', 
                                       command= self.start,
                                       state= 'enabled'
@@ -68,19 +77,41 @@ class App(tk.Tk):
                                  background= '#f9cb9c')
         label_weight.grid(column=0, row=3, sticky=tk.E, **paddings)
         
+        label_area= ttk.Label(self, text='Area(m2)',
+                                 background= '#f9cb9c')
+        label_area.grid(column=0, row=4, sticky=tk.E, **paddings)
+
+        label_d= ttk.Label(self, text='Drag coeff',
+                                 background= '#f9cb9c')
+        label_d.grid(column=0, row=5, sticky=tk.E, **paddings)
+        
+
         label_ld= ttk.Label(self, text='Lift/Drag ratio',
                                  background= '#f9cb9c')
-        label_ld.grid(column=0, row=4, sticky=tk.E, **paddings)
+        label_ld.grid(column=0, row=6, sticky=tk.E, **paddings)
         
         doThis=''' 
-        As a reference, approximate values for 
-        different vehicles at reentry are:
+        Choose the vehicle parameters on the left. 
+        Default values are Soyuz's.
 
-        \t\tLift/Drag ratio
-        Soyuz\t0.4
-        Apollo\t0.3
-        Space Shuttle\t1.0 
-        Airliner\t17.0
+        The simulation starts at aprox 70Km heading
+        Kazakhstan, as a Soyuz comming from the ISS
+
+        Use 'z' and 'x' to change the bank angle
+        (0 deg at start). Positive values means
+        port banking. Negative: starboard banking
+        
+        Educated guesses for different vehicles 
+        at reentry are:
+
+        \t\tM\tA\tCd\tL/D 
+        Soyuz\t2.2\t3.8\t1.1\t0.4
+        Apollo\t5.5\t12\t1.26\t0.36
+        Space Shuttle\t100\t245\t0.9\t1.1
+
+        M: mass(t)  A: area(m2)
+        Cd: Drag coefficient
+        L/D: Lift to Drag ratio
         '''
         label_doThis= ttk.Label(self, text= doThis,
                                background= '#f9cb6f',
@@ -121,7 +152,8 @@ class App(tk.Tk):
         
         self.ld= self.ld.get()
         self.w= self.weight.get()
-       
+        self.a= self.area.get()
+        self.d= self.cd.get()
         pwd=os.getcwd()
         if os.path.isdir(os.path.join(pwd, 'lib_files'))==False:
             os.mkdir('lib_files')
@@ -131,7 +163,7 @@ class App(tk.Tk):
         file_path= os.path.join(pwd,'lib_files','init_params.txt')
         print (file_path)
         with open(file_path, 'w') as f:
-            f.write(f'{self.w},{self.ld}')
+            f.write(f'{self.w},{self.a},{self.d},{self.ld}')
         
         #to be used for final compilation linux
         #path= os.path.join('dist','CCIP_main','CCIP_main')  
